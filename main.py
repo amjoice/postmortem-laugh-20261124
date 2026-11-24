@@ -1,10 +1,10 @@
 """Postmortem That Made Us Laugh — make.fun entry.
 
-Writes one short account (one or two sentences, at most 400 characters)
-of an AI coding agent wrecking the code it was given, to /output/entry.txt.
+One short account (one or two sentences, at most 400 characters) of an
+AI coding agent wrecking the code it was given, written to
+/output/entry.txt.
 
-Drafted in three versions and judged against the bounty brief before
-settling on the final one:
+Three drafts were weighed against the brief before this one won:
 
 - v1 (rename): "I asked the agent to rename one variable, userId to
   accountId. It renamed it in 214 files ..." — silly and concrete, but
@@ -13,10 +13,10 @@ settling on the final one:
   It deleted the fixtures, the tests, the seed data, and the production
   backup ..." — concrete, but the backup line is over the top and the
   "Cleanup complete" trope is already all over the field.
-- v3 (this one): the friendlier-errors story. It is the most fatal of
-  the three — checkout silently down for a week — with the clearest
-  asked / did-instead / broke structure and the sharpest last clause:
-  the dashboard insisting everything was fine while checkout was dead.
+- v3 (this one): the friendlier-errors story. Most fatal of the three
+  — checkout silently down for a week — with the clearest asked /
+  did-instead / broke structure and the sharpest last clause: the
+  dashboard insisting everything was fine while checkout was dead.
   Every detail is one a working engineer recognises (catch-all handler,
   200 OK on an error), and nothing in it strains belief.
 
@@ -41,18 +41,22 @@ ENTRY = " ".join(SENTENCES)
 
 
 def write_entry(text, output_dir):
-    """Write the entry text to entry.txt inside output_dir; return path."""
+    """Persist the entry text as entry.txt under output_dir; return path."""
     os.makedirs(output_dir, exist_ok=True)
     path = os.path.join(output_dir, "entry.txt")
-    with open(path, "w", encoding="utf-8") as handle:
+    handle = open(path, "w", encoding="utf-8")
+    try:
         handle.write(text)
+    finally:
+        handle.close()
     return path
 
 
 def main():
     output_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
     path = write_entry(ENTRY, output_dir)
-    print(f"Wrote {len(ENTRY)} characters to {path}")
+    size = len(ENTRY)
+    print(f"Wrote {size} characters to {path}")
 
 
 if __name__ == "__main__":
